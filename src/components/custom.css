@@ -9,7 +9,7 @@
 }
 .customHeader select, .customHeader .text{
     display: inline-block;
-    margin: 16px;
+    margin: 16px 8px;
     padding: 8px 16px;
     background-color: white;
     border-radius: 18px;

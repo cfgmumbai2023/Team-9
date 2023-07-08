@@ -2,6 +2,7 @@ import {useEffect, useState } from "react";
 import Chart from "chart.js/auto";
 import {Bar, Doughnut, Pie, Line} from 'react-chartjs-2';
 import './custom.css';
+import myImage from './chart-671.svg'
 
 function Custom(props){
     const [cReq, setReq] = useState({});        //cReq: Request details for chart
@@ -37,91 +38,20 @@ function Custom(props){
 
         setReq(reqData);
     }
+    
+    const [chartData, setChartData] = useState({});
+    const [isChartOpen, setChartOpen] = useState(false);
 
-    function handleResponse(response){
-        console.log(response)
-        let element;
-        if(response.name === 'bar'){
-            var chartData = {
-                labels: response.labels,
-                datasets: [
-                    {
-                        label: response.title,
-                        data: response.data,
-                        backgroundColor: 'rgba(53, 162, 235, 0.9)'
-                    }
-                ]
+    const handleChart = () => {
+        fetch('/chart', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
             }
-            element = <Bar className="custom_bar_chart" options={barOptions} data={chartData}/>
-        }
-        else if(response.name === 'pie'){
-            let chartData = {
-                labels: response.labels,
-                datasets: [
-                    {
-                        data: response.data,
-                        backgroundColor: [
-                            '#36a2eb', '#ff6384', '#ff9f40', '#ffcd56', '#4bc0c0', '#96f'
-                        ]
-                    }
-                ]
-            }
-            element = <Pie className="pie_chart" data={chartData} />
-        }
-        else if(response.name === 'doughnut'){
-            let chartData = {
-                labels: response.labels,
-                datasets: [
-                    {
-                        data: response.data,
-                        backgroundColor: [
-                            '#fc7e7a', '#61d0c6',
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)',
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)',
-                        ],
-                        borderWidth: 1,
-                    }
-                ]
-            }
-            console.log('doughnut.......')
-            element = <Doughnut className="doughnut_chart" data={chartData}/>
-        }
-        //'bar_h' for horizontal bar chart
-        else if(response.name === "line"){
-            let options = JSON.parse(JSON.stringify(barOptions))
-            var chartData = {
-                labels: response.labels,
-                datasets: [
-                    {
-                        label: response.title,
-                        data: response.data,
-                        borderColor: 'rgb(255, 99, 132)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.5)'
-                    }
-                ]
-            }
-            element = <Line className="bar_cart" options={options} data={chartData}/>
-        }
-        setResult(
-            <>
-            <div className="chartTitle">
-                {response.title}
-            </div>
-            {element}
-            </>
-        )
+        })
+        .then(res => res.json())
+        .then(data => setChartData(data))
+        setChartOpen(true)
     }
 
     const fetchHtmlData = async () => {
@@ -149,10 +79,28 @@ function Custom(props){
         fetchHtmlData();
     }, [htmlData]);
 
+    const handleChartChange = () => {
+        if(document.getElementById('chartbutton').value == '0') return setChartOpen(false);
+        else{
+            fetch('/getchart',{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body:JSON.stringify({
+                    'field': document.getElementById('chartbutton').value
+                })
+            })
+            .then(res => res.json())
+            .then(data => {setChartData(data); console.log(data)});
+        }
+        setChartOpen(true);
+    }
+
 
     return (
         <div className="custom-container">
-            <Header handleInput={handleInput}/>
+            <Header handleInput={handleInput} handleChartChange={handleChartChange} isChartOpen={isChartOpen} chartData={chartData} />
             <div className="result" dangerouslySetInnerHTML={{ __html: htmlData }}>
             </div>
         </div>
@@ -160,6 +108,30 @@ function Custom(props){
 }
 
 function Header(props){
+
+    const barOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false,
+            },
+            title: {
+            display: true,
+            },
+        },
+    }
+
+    let labels = props.chartData['name']
+    const data = {
+        labels,
+        datasets: [
+          {
+            data: props.chartData['count'],
+            backgroundColor: ['#F25022', '#7FBA00', '#00A4EF', '#FFB900', '#737373'],
+          }
+        ],
+      };
+
     return(
         <div className='customHeader'>
                 <div className="text">Please select: </div>
@@ -197,8 +169,8 @@ function Header(props){
                     <option value='Male'>Male</option>
                     <option value='Female'>Female</option>
                 </select>
-                <select style={{}}>
-                    <option value='0'></option>
+                <select style={{width: '90px'}} onChange={props.handleChartChange} id='chartbutton'>
+                    <option value='0'>Chart</option>
                     <option value='BMC School'>School</option>
                     <option value='Disability'>Disability</option>
                     <option value='Severity'>Severity</option>
@@ -206,6 +178,12 @@ function Header(props){
                     <option value='Age'>Age</option>
                     <option value='Program'>Program</option>
                 </select>
+                {
+                    props.isChartOpen &&
+                    <div class='chartoverlay' style={{height: `${'500px'}`, width: '400px', margin: 'auto'}}>
+                        <Pie options={barOptions} data={data}/>
+                    </div>
+                }
                 {/* <select name="timeInput" id="timeInput" onChange={props.handleInput}>
                     <option value="365">Last 1 Year</option>
                     <option value='180'>Last 180 Days</option>
