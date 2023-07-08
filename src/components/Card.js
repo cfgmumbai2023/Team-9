@@ -8,7 +8,7 @@ function Card() {
           <div className="row justify-content-center py-5 ">
             <div className="col-md-10">
               <h1 className="text-center mb-5 display-5">
-                The Different Perspectives We Focus On
+                The Different Perspectives We Focus On 
               </h1>
             </div>
             <div className="col-md-3  ">
