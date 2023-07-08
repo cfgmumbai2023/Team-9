@@ -17,8 +17,8 @@ def m():
 # Route for seeing data
 @app.route('/auto_reports', methods=["POST", "GET"])
 def sales():
-    data_name = my_data['DISABILITY'].value_counts().head().index.to_list()
-    data_count = my_data['DISABILITY'].value_counts().head().values.tolist()
+    data_name = my_data['Disability'].value_counts().head().index.to_list()
+    data_count = my_data['Disability'].value_counts().head().values.tolist()
     
     return {
         'name': data_name,
@@ -28,12 +28,19 @@ def sales():
 @app.route('/custom', methods=['POST'])
 def custom():
     req = request.json
-    if req == {}:
-        return {}
-    
-    custom_data = {}
+    my_data.drop(my_data.filter(regex="Unname"),axis=1, inplace=True)
 
-    return custom_data
+    print(req)
+    filtered_data = my_data
+
+    for key in req:
+        filtered_data = filtered_data[filtered_data[key] == req[key]]
+
+    print('Adarsh')
+    
+    custom_data = filtered_data.to_html()
+
+    return jsonify(custom_data)
 
 
 if __name__ == '__main__':

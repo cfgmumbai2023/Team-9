@@ -11,11 +11,15 @@ function AutoReports(props){
     const chart_options = {
         responsive: true,
         legend: {
-            display: false,
+            display: true,
         },
         plugins: {
             legend: {
                 display: false
+            },
+            title:{
+                display: true,
+                text: 'No. of Students/Disability'
             }
         },
     };

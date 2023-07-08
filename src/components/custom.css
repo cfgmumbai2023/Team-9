@@ -36,3 +36,13 @@
         margin: 8px;
     }
 }
+.result{
+    overflow: scroll;
+}
+
+.result table *{
+    border: none;
+    border-right: 1px solid grey;
+    border-bottom: 1px solid grey;
+    padding: 0 6px;
+}
