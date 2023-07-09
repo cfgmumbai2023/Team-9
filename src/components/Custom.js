@@ -2,7 +2,6 @@ import {useEffect, useState } from "react";
 import Chart from "chart.js/auto";
 import {Bar, Doughnut, Pie, Line} from 'react-chartjs-2';
 import './custom.css';
-import myImage from './chart-671.svg'
 
 function Custom(props){
     const [cReq, setReq] = useState({});        //cReq: Request details for chart

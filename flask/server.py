@@ -16,9 +16,22 @@ def m():
 
 # Route for seeing data
 @app.route('/auto_reports', methods=["POST", "GET"])
-def sales():
+def auto_reports():
     data_name = my_data['Disability'].value_counts().head().index.to_list()
     data_count = my_data['Disability'].value_counts().head().values.tolist()
+    
+    return {
+        'name': data_name,
+        'count': data_count
+    }
+
+@app.route('/getchart', methods=["POST", "GET"])
+def getchart():
+    req = request.json
+    data_name = my_data[req['field']].value_counts().head().index.to_list()
+    data_count = my_data[req['field']].value_counts().head().values.tolist()
+
+    print(data_name)
     
     return {
         'name': data_name,
