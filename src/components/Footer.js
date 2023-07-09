@@ -5,7 +5,7 @@ const Footer = () => <footer className="page-footer font-small blue pt-4 bg-succ
         <div className="row">
             <div className="col-md-6 mt-md-0 mt-3">
                 <h5 className="text-uppercase">Urmi NGO</h5>
-                <p>Here you can use rows and columns to organize your footer content.</p>
+                <p>"Unlocking Potential, Empowering Lives: Changing the World for Disabled Kids"</p>
             </div>
             <div className="col-md-5 mb-md-0 mb-3">
                 <h5 className="text-right">Useful Links</h5>
